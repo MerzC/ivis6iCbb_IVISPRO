@@ -373,26 +373,102 @@ function fillHoldedData(year){
     });
 }
 
-function selected(country) {
-    d3.select('#barchart')
-        .classed('selected', true)
-        .text("Hello");
 
-    var dataForBarchart =[];
-    var time = [];
+function selected(country) {
+    createBarsForCountries(country);
+    //d3.select(this).classed('selected', true);
+}
+
+function createBarsForCountries(country) {
+
+    var margin = {top: 5, right: 5, bottom: 50, left: 50};
+    // here, we want the full chart to be 700x200, so we determine
+    // the width and height by subtracting the margins from those values
+    var fullWidth = 700;
+    var fullHeight = 200;
+    // the width and height values will be used in the ranges of our scales
+    var width = fullWidth - margin.right - margin.left;
+    var height = fullHeight - margin.top - margin.bottom;
+
+
+    var svg = d3.select("#placeBarchart")
+        .append('svg')
+        .attr('width', fullWidth)
+        .attr('height', fullHeight);
+
+    svg.append("g")
+        .attr("id", "barchart")
+        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+   var data = [];
 
     allCountries.forEach(d => {
         if(d.code == country.id){
-            dataForBarchart.push(d.romancatholic_percent);
-            time.push(d.year);
+            data.push({"value": d.romancatholic_percent, "year": d.year});
         }
     });
 
+    console.log(data);
 
-    console.log(country.id);
-    console.log(dataForBarchart);
+    var years = data.map(function (v) {
+        return v.year;
+    });
 
-    console.log(time);
+    const yearScale = d3.scaleBand()
+        .domain(years)
+        .range([0, width])
+        .paddingInner(0.1);
 
-    //d3.select(this).classed('selected', true);
+
+    // the width of the bars is determined by the scale
+    var bandwidth = yearScale.bandwidth();
+
+    var maxValue = d3.max(data, function (d) {
+        return d.value;
+    });
+
+    var valueScale = d3.scaleLinear()
+        .domain([0, maxValue])
+        .range([height, 0])
+        .nice();
+
+    var xAxis = d3.axisBottom(yearScale);
+    var yAxis = d3.axisLeft(valueScale);
+
+    // draw the axees
+    svg.append('g')
+        .attr('transform', 'translate(0,' + height + ')')
+        .call(xAxis);
+
+    var yAxisEle = svg.append('g')
+        .call(yAxis);
+
+    // add a label to the yAxis
+    var yText = yAxisEle.append('text')
+        .attr('transform', 'rotate(-90)translate(-' + height/2 + ',0)')
+        .style('text-anchor', 'middle')
+        .style('fill', 'black')
+        .attr('dy', '-2.5em')
+        .style('font-size', 14)
+        .text('Fahrenheit');
+
+    const vis = svg.append('g');
+
+    // draw the bars
+    var bars = vis.selectAll('rect.bar')
+        .remove()
+        .exit()
+        .data(data)
+        .enter().append('rect')
+        .attr('x', function(d, i) {
+            return yearScale(d.year);
+        })
+        .attr('width', bandwidth)
+        .attr('y', function(d) {
+            return valueScale(d.value);
+        })
+        .attr('height', function(d) {
+            // the bar's height should align it with the base of the chart (y=0)
+            return height - valueScale(d.value);
+        });
 }
