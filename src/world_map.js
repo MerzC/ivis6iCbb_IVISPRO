@@ -1,33 +1,46 @@
 // create svg canvas
-const canvHeight = 290, canvWidth = 400;
-
-var initX;
-
-
+const canvHeight = 380, canvWidth = 580;
 
 const svgRoman = d3.select("#worldmap").append("svg")
     .attr("width", canvWidth)
-    .attr("height", canvHeight);
+    .attr("height", canvHeight)
+    .style("background", "rgba(169,234,254,0.7)")
+    .attr("class", "svgRoman");
 
 const svgProtestant = d3.select("#worldmap").append("svg")
     .attr("width", canvWidth)
-    .attr("height", canvHeight);
+    .attr("height", canvHeight)
+    .style("background", "rgba(169,234,254,0.7)")
+    .attr("class", "svgProtestant");
 
 const svgJudaism = d3.select("#worldmap").append("svg")
     .attr("width", canvWidth)
-    .attr("height", canvHeight);
+    .attr("height", canvHeight)
+    .style("background", "rgba(169,234,254,0.7)")
+    .attr("class", "svgJudaism");
 
 const svgIslam = d3.select("#worldmap").append("svg")
     .attr("width", canvWidth)
-    .attr("height", canvHeight);
+    .attr("height", canvHeight)
+    .style("background", "rgba(169,234,254,0.7)")
+    .attr("class", "svgIslam");
 
 const svgBuddhism = d3.select("#worldmap").append("svg")
     .attr("width", canvWidth)
-    .attr("height", canvHeight);
+    .attr("height", canvHeight)
+    .style("background", "rgba(169,234,254,0.7)")
+    .attr("class", "svgBuddhism");
 
 const svgHinduism = d3.select("#worldmap").append("svg")
     .attr("width", canvWidth)
-    .attr("height", canvHeight);
+    .attr("height", canvHeight)
+    .style("background", "rgba(169,234,254,0.7)")
+    .attr("class", "svgHinduism");
+
+var tooltipRoman = d3.select("svg.svgRoman").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
 
 var holdedData = [];
 
@@ -42,11 +55,11 @@ var hinduismByID = {};
 //Farben der verschiedenen Religionen
 //Inspiration: https://imbstudent.donau-uni.ac.at/1mmd2016/index.php/2016/03/05/farbe-und-religion/
 
-var color2 = d3.scaleLinear().domain([0,1])
-    .range([d3.rgb("#f7fcfd"), d3.rgb("#00441b")]);
-
 var colorChrist = d3.scaleLinear().domain([0,1])
     .range([d3.rgb("#fcfbfd"), d3.rgb("#3f007d")]);
+
+var colorProtestant = d3.scaleLinear().domain([0,1])
+    .range([d3.rgb("#fff5f0"), d3.rgb("#67000d")]);
 
 var colorJudaism = d3.scaleLinear().domain([0,1])
     .range([d3.rgb("#f7fbff"), d3.rgb("#08306b")]);
@@ -126,6 +139,7 @@ function draw(year){
         .attr("transform", `translate(10, 10)`);
 
 
+
     // create title
     gRoman.append("text")
         .attr("id", "chart-title")
@@ -170,7 +184,7 @@ function draw(year){
         .text("Hinduismus");
 
     const projection = d3.geoMercator()
-        .scale(60)
+        .scale(90)
         .center([6, 10])
         .translate( [canvWidth / 2, canvHeight / 1.5]);
 
@@ -185,11 +199,24 @@ function draw(year){
             .enter()
             .append("path")
             .attr("class", "country")
-            .on('click', d => selected(d))
+            .on('click', d => selected(d, "christanity"))
             .style("fill", d => {
                 var color = colorChrist(romancatholicByID[d.id]);
                 if(color != "rgb(0, 0, 0)") {return color;}
                 return defaultColor;
+            })
+            .on("mouseover", function(d) {
+                tooltipRoman.transition()
+                    .duration(200)
+                    .style("opacity", .9);
+                tooltipRoman.html(d.properties.name)
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY - 28) + "px");
+            })
+            .on("mouseout", function(d) {
+                tooltipRoman.transition()
+                    .duration(500)
+                    .style("opacity", 0);
             })
             .attr("d", pathGenerator);
 
@@ -198,8 +225,9 @@ function draw(year){
             .enter()
             .append("path")
             .attr("class", "country")
+            .on('click', d => selected(d, "protestant"))
             .style("fill", d =>{
-                var color = colorChrist(protestantByID[d.id]);
+                var color = colorProtestant(protestantByID[d.id]);
                 if(color != "rgb(0, 0, 0)") {return color;}
                 return defaultColor;
             })
@@ -210,6 +238,7 @@ function draw(year){
             .enter()
             .append("path")
             .attr("class", "country")
+            .on('click', d => selected(d, "judaism"))
             .style("fill", d =>{
                 var color = colorJudaism(judaismByID[d.id]);
                 if(color != "rgb(0, 0, 0)") {return color;}
@@ -222,6 +251,7 @@ function draw(year){
             .enter()
             .append("path")
             .attr("class", "country")
+            .on('click', d => selected(d, "islam"))
             .style("fill", d =>{
                 var color = colorIslam(islamByID[d.id]);
                 if(color != "rgb(0, 0, 0)") {return color;}
@@ -234,6 +264,7 @@ function draw(year){
             .enter()
             .append("path")
             .attr("class", "country")
+            .on('click', d => selected(d, "buddhism"))
             .style("fill", d =>{
                 var color = colorBudd(buddhismByID[d.id]);
                 if(color != "rgb(0, 0, 0)") {return color;}
@@ -246,6 +277,7 @@ function draw(year){
             .enter()
             .append("path")
             .attr("class", "country")
+            .on('click', d => selected(d, "hinduism"))
             .style("fill", d =>{
                 var color = colorHind(hinduismByID[d.id]);
                 if(color != "rgb(0, 0, 0)") {return color;}
@@ -269,7 +301,7 @@ function drawNew(year){
 
     var countryProtestant = svgProtestant.selectAll('path.country')
         .style("fill", d =>{
-            var color = colorChrist(protestantByID[d.id]);
+            var color = colorProtestant(protestantByID[d.id]);
             if(color != "rgb(0, 0, 0)") {return color;}
             return defaultColor;
         });
@@ -374,41 +406,75 @@ function fillHoldedData(year){
 }
 
 
-function selected(country) {
-    createBarsForCountries(country);
-    //d3.select(this).classed('selected', true);
-}
+function selected(country, religion) {
+    var data = [];
 
-function createBarsForCountries(country) {
+    var textBarchart;
+    var colorBars;
 
-    var margin = {top: 5, right: 5, bottom: 50, left: 50};
+    allCountries.forEach(d => {
+        if(d.code == country.id){
+            if(religion == "christanity"){
+                data.push({"value": d.romancatholic_percent, "year": d.year});
+                textBarchart = "Anzahl der Katholiken in " + country.id + " von 1945 - 2010";
+                colorBars = "#00441b";
+            }
+            else if(religion == "protestant"){
+                data.push({"value": d.protestant_percent, "year": d.year});
+                textBarchart = "Anzahl der Reformierten in " + country.id + " von 1945 - 2010";
+                colorBars = "#cb181d";
+            }
+            else if(religion == "judaism"){
+                data.push({"value": d.judaism_percent, "year": d.year});
+                textBarchart = "Anzahl der Juden in " + country.id + " von 1945 - 2010";
+                colorBars = "#08306b";
+            }
+            else if(religion == "islam"){
+                data.push({"value": d.islam_percent, "year": d.year});
+                textBarchart = "Anzahl der Islamisten in " + country.id + " von 1945 - 2010";
+                colorBars = "#00441b";
+            }
+            else if(religion == "buddhism"){
+                data.push({"value": d.buddhism_percent, "year": d.year});
+                textBarchart = "Anzahl der Buddhisten in "  + country.id + " von 1945 - 2010";
+                colorBars = "#f16913";
+            }
+            else{
+                data.push({"value": d.hinduism_percent, "year": d.year});
+                textBarchart = "Anzahl der Hinduisten in " + country.id + " von 1945 - 2010";
+                colorBars = "#666600";
+            }
+        }
+    });
+    console.log(data);
+    if(data.length == 0) return;
+
+    var margin = {top: 5, right: 5, bottom: 50, left: 100};
     // here, we want the full chart to be 700x200, so we determine
     // the width and height by subtracting the margins from those values
-    var fullWidth = 700;
-    var fullHeight = 200;
+    var fullWidth = 1000;
+    var fullHeight = 350;
     // the width and height values will be used in the ranges of our scales
     var width = fullWidth - margin.right - margin.left;
     var height = fullHeight - margin.top - margin.bottom;
 
 
+    var svgSelection = d3.select("#placeBarchart")
+        .selectAll('svg')
+        .remove();
+
     var svg = d3.select("#placeBarchart")
         .append('svg')
         .attr('width', fullWidth)
-        .attr('height', fullHeight);
+        .attr('height', fullHeight)
+        .style('padding', '40px')
+        .append('g')
+        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
 
     svg.append("g")
         .attr("id", "barchart")
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-
-   var data = [];
-
-    allCountries.forEach(d => {
-        if(d.code == country.id){
-            data.push({"value": d.romancatholic_percent, "year": d.year});
-        }
-    });
-
-    console.log(data);
 
     var years = data.map(function (v) {
         return v.year;
@@ -417,8 +483,7 @@ function createBarsForCountries(country) {
     const yearScale = d3.scaleBand()
         .domain(years)
         .range([0, width])
-        .paddingInner(0.1);
-
+        .paddingInner(0.5);
 
     // the width of the bars is determined by the scale
     var bandwidth = yearScale.bandwidth();
@@ -448,16 +513,22 @@ function createBarsForCountries(country) {
         .attr('transform', 'rotate(-90)translate(-' + height/2 + ',0)')
         .style('text-anchor', 'middle')
         .style('fill', 'black')
-        .attr('dy', '-2.5em')
-        .style('font-size', 14)
-        .text('Fahrenheit');
+        .attr('dy', '-5em')
+        .style('font-size', 14);
+
+    //Titel for Barchart
+    svg.append("text")
+        .attr("x", (width / 2))
+        .attr("y", 0 - (margin.top / 2))
+        .attr("text-anchor", "middle")
+        .style("font-size", "16px")
+        .style("text-decoration", "underline")
+        .text(textBarchart);
 
     const vis = svg.append('g');
 
     // draw the bars
     var bars = vis.selectAll('rect.bar')
-        .remove()
-        .exit()
         .data(data)
         .enter().append('rect')
         .attr('x', function(d, i) {
@@ -470,5 +541,8 @@ function createBarsForCountries(country) {
         .attr('height', function(d) {
             // the bar's height should align it with the base of the chart (y=0)
             return height - valueScale(d.value);
-        });
+        })
+        .attr('fill', colorBars);
+
+    window.scrollTo(0,document.body.scrollHeight);
 }
