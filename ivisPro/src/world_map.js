@@ -1,31 +1,35 @@
 // create svg canvas
 const canvHeight = 290, canvWidth = 400;
 
-const svgRoman = d3.select("body").append("svg")
+var initX;
+
+
+
+const svgRoman = d3.select("#worldmap").append("svg")
     .attr("width", canvWidth)
     .attr("height", canvHeight);
 
-const svgProtestant = d3.select("body").append("svg")
+const svgProtestant = d3.select("#worldmap").append("svg")
     .attr("width", canvWidth)
     .attr("height", canvHeight);
 
-const svgJudaism = d3.select("body").append("svg")
+const svgJudaism = d3.select("#worldmap").append("svg")
     .attr("width", canvWidth)
     .attr("height", canvHeight);
 
-const svgIslam = d3.select("body").append("svg")
+const svgIslam = d3.select("#worldmap").append("svg")
     .attr("width", canvWidth)
     .attr("height", canvHeight);
 
-const svgBuddhism = d3.select("body").append("svg")
+const svgBuddhism = d3.select("#worldmap").append("svg")
     .attr("width", canvWidth)
     .attr("height", canvHeight);
 
-const svgHinduism = d3.select("body").append("svg")
+const svgHinduism = d3.select("#worldmap").append("svg")
     .attr("width", canvWidth)
     .attr("height", canvHeight);
 
-var holdedData = []
+var holdedData = [];
 
 var romancatholicByID = {};
 var protestantByID = {};
@@ -66,6 +70,8 @@ const heigth = canvHeight - margin.top - margin.bottom;
 
 loadData();
 
+var allCountries = [];
+
 function loadData() {
     d3.csv("data/national-clean_v2-somethingv2.csv", function (data) {
 
@@ -80,6 +86,9 @@ function loadData() {
             });
             holdedData.push(temp);
         });
+
+        data.forEach(d => allCountries.push(d));
+
     });
 
     draw(13);
@@ -176,6 +185,7 @@ function draw(year){
             .enter()
             .append("path")
             .attr("class", "country")
+            .on('click', d => selected(d))
             .style("fill", d => {
                 var color = colorChrist(romancatholicByID[d.id]);
                 if(color != "rgb(0, 0, 0)") {return color;}
@@ -250,42 +260,42 @@ function draw(year){
 function drawNew(year){
     fillHoldedData(year);
 
-    var country =  svgRoman.selectAll('path.country')
+    var country = svgRoman.selectAll('path.country')
         .style("fill", d => {
             var color = colorChrist(romancatholicByID[d.id]);
             if(color != "rgb(0, 0, 0)") {return color;}
             return defaultColor;
         });
 
-    var countryProtestant =  svgProtestant.selectAll('path.country')
+    var countryProtestant = svgProtestant.selectAll('path.country')
         .style("fill", d =>{
             var color = colorChrist(protestantByID[d.id]);
             if(color != "rgb(0, 0, 0)") {return color;}
             return defaultColor;
         });
 
-    var countryJudaism =  svgJudaism.selectAll('path.country')
+    var countryJudaism = svgJudaism.selectAll('path.country')
         .style("fill", d =>{
             var color = colorJudaism(judaismByID[d.id]);
             if(color != "rgb(0, 0, 0)") {return color;}
             return defaultColor;
         });
 
-    var countryIslam =  svgIslam.selectAll('path.country')
+    var countryIslam = svgIslam.selectAll('path.country')
         .style("fill", d =>{
             var color = colorIslam(islamByID[d.id]);
             if(color != "rgb(0, 0, 0)") {return color;}
             return defaultColor;
         });
 
-    var countryBuddhism =  svgBuddhism.selectAll('path.country')
+    var countryBuddhism = svgBuddhism.selectAll('path.country')
         .style("fill", d =>{
             var color = colorBudd(buddhismByID[d.id]);
             if(color != "rgb(0, 0, 0)") {return color;}
             return defaultColor;
         });
 
-    var countryHinduism =  svgHinduism.selectAll('path.country')
+    var countryHinduism = svgHinduism.selectAll('path.country')
         .style("fill", d =>{
             var color = colorHind(hinduismByID[d.id]);
             if(color != "rgb(0, 0, 0)") {return color;}
@@ -361,4 +371,28 @@ function fillHoldedData(year){
         buddhismByID[d.code] = +d.buddhism_percent;
         hinduismByID[d.code] = +d.hinduism_percent;
     });
+}
+
+function selected(country) {
+    d3.select('#barchart')
+        .classed('selected', true)
+        .text("Hello");
+
+    var dataForBarchart =[];
+    var time = [];
+
+    allCountries.forEach(d => {
+        if(d.code == country.id){
+            dataForBarchart.push(d.romancatholic_percent);
+            time.push(d.year);
+        }
+    });
+
+
+    console.log(country.id);
+    console.log(dataForBarchart);
+
+    console.log(time);
+
+    //d3.select(this).classed('selected', true);
 }

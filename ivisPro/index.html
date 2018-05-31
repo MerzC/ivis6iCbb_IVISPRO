@@ -5,6 +5,12 @@
     <title>Religion Verteilung</title>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <style>
+        body{
+            width: 1024px;
+            text-align: center;
+            font-family: 'Open Sans';
+        }
+
         .country-boundary {
             fill: none;
             stroke: black;
@@ -19,7 +25,7 @@
             font-weight: bold;
         }
 
-        body{
+        #worldmap{
             width: 1024px;
             text-align: center;
             font-family: 'Open Sans';
@@ -59,6 +65,12 @@
             background: #000000;
             cursor: pointer;
         }
+
+        .selected{
+            width: 50px;
+            height: 50px;
+            fill: red;
+        }
     </style>
 </head>
 <body>
@@ -70,9 +82,15 @@
     </div>
     <output name="selected_year" id="selected_year">2010</output>
 
+    <div id="worldmap">
+    </div>
+
+
 </form>
 
+<div id="barchart">
 
+</div>
 <script src='d3/d3.v4.js'></script>
 <script src="d3/queue.v1.min.js"></script>
 <script src="d3/topojson.v2.min.js"></script>
