@@ -4,37 +4,31 @@ const canvHeight = 380, canvWidth = 580;
 const svgRoman = d3.select("#worldmap").append("svg")
     .attr("width", canvWidth)
     .attr("height", canvHeight)
-    .style("background", "rgba(169,234,254,0.7)")
     .attr("class", "svgRoman");
 
 const svgProtestant = d3.select("#worldmap").append("svg")
     .attr("width", canvWidth)
     .attr("height", canvHeight)
-    .style("background", "rgba(169,234,254,0.7)")
     .attr("class", "svgProtestant");
 
 const svgJudaism = d3.select("#worldmap").append("svg")
     .attr("width", canvWidth)
     .attr("height", canvHeight)
-    .style("background", "rgba(169,234,254,0.7)")
     .attr("class", "svgJudaism");
 
 const svgIslam = d3.select("#worldmap").append("svg")
     .attr("width", canvWidth)
     .attr("height", canvHeight)
-    .style("background", "rgba(169,234,254,0.7)")
     .attr("class", "svgIslam");
 
 const svgBuddhism = d3.select("#worldmap").append("svg")
     .attr("width", canvWidth)
     .attr("height", canvHeight)
-    .style("background", "rgba(169,234,254,0.7)")
     .attr("class", "svgBuddhism");
 
 const svgHinduism = d3.select("#worldmap").append("svg")
     .attr("width", canvWidth)
     .attr("height", canvHeight)
-    .style("background", "rgba(169,234,254,0.7)")
     .attr("class", "svgHinduism");
 
 var tooltipRoman = d3.select("svg.svgRoman").append("div")
@@ -51,6 +45,7 @@ var islamByID = {};
 var buddhismByID = {};
 var hinduismByID = {};
 
+var moreInfos = "Klicke für eine Gesamtübersicht " + "<br />" + "des Landes zu dieser Religion";
 
 //Farben der verschiedenen Religionen
 //Inspiration: https://imbstudent.donau-uni.ac.at/1mmd2016/index.php/2016/03/05/farbe-und-religion/
@@ -104,7 +99,7 @@ function loadData() {
 
     });
 
-    draw(13);
+    draw(0);
 }
 
 //---------------------Draw WORLD MAP-------------------------
@@ -205,19 +200,11 @@ function draw(year){
                 if(color != "rgb(0, 0, 0)") {return color;}
                 return defaultColor;
             })
-            .on("mouseover", function(d) {
-                tooltipRoman.transition()
-                    .duration(200)
-                    .style("opacity", .9);
-                tooltipRoman.html(d.properties.name)
-                    .style("left", (d3.event.pageX) + "px")
-                    .style("top", (d3.event.pageY - 28) + "px");
-            })
-            .on("mouseout", function(d) {
-                tooltipRoman.transition()
-                    .duration(500)
-                    .style("opacity", 0);
-            })
+            .call(d3.helper.tooltip(
+                function(d, i){
+                    return "<b>"+d.properties.name + "</b>" + "<br />" +  moreInfos;
+                }
+            ))
             .attr("d", pathGenerator);
 
         var countryProtestant =  gProtestant.selectAll('path.country')
@@ -231,6 +218,11 @@ function draw(year){
                 if(color != "rgb(0, 0, 0)") {return color;}
                 return defaultColor;
             })
+            .call(d3.helper.tooltip(
+                function(d, i){
+                    return "<b>"+d.properties.name + "</b>" + "<br />" +  moreInfos;
+                }
+            ))
             .attr("d", pathGenerator);
 
         var countryJudaism =  gJudaism.selectAll('path.country')
@@ -244,6 +236,11 @@ function draw(year){
                 if(color != "rgb(0, 0, 0)") {return color;}
                 return defaultColor;
             })
+            .call(d3.helper.tooltip(
+                function(d, i){
+                    return "<b>"+d.properties.name + "</b>" + "<br />" +  moreInfos;
+                }
+            ))
             .attr("d", pathGenerator);
 
         var countryIslam =  gIslam.selectAll('path.country')
@@ -257,6 +254,11 @@ function draw(year){
                 if(color != "rgb(0, 0, 0)") {return color;}
                 return defaultColor;
             })
+            .call(d3.helper.tooltip(
+                function(d, i){
+                    return "<b>"+d.properties.name + "</b>" + "<br />" +  moreInfos;
+                }
+            ))
             .attr("d", pathGenerator);
 
         var countryBuddhism =  gBuddhism.selectAll('path.country')
@@ -270,6 +272,11 @@ function draw(year){
                 if(color != "rgb(0, 0, 0)") {return color;}
                 return defaultColor;
             })
+            .call(d3.helper.tooltip(
+                function(d, i){
+                    return "<b>"+d.properties.name + "</b>" + "<br />" +  moreInfos;
+                }
+            ))
             .attr("d", pathGenerator);
 
         var countryHinduism =  gHinduism.selectAll('path.country')
@@ -283,6 +290,11 @@ function draw(year){
                 if(color != "rgb(0, 0, 0)") {return color;}
                 return defaultColor;
             })
+            .call(d3.helper.tooltip(
+                function(d, i){
+                    return "<b>"+d.properties.name + "</b>" + "<br />" +  moreInfos;
+                }
+            ))
             .attr("d", pathGenerator);
 
     });
@@ -416,40 +428,39 @@ function selected(country, religion) {
         if(d.code == country.id){
             if(religion == "christanity"){
                 data.push({"value": d.romancatholic_percent, "year": d.year});
-                textBarchart = "Anzahl der Katholiken in " + country.id + " von 1945 - 2010";
-                colorBars = "#00441b";
+                textBarchart = "Anzahl der Katholiken in " + country.id;
+                colorBars = "#3f007d";
             }
             else if(religion == "protestant"){
                 data.push({"value": d.protestant_percent, "year": d.year});
-                textBarchart = "Anzahl der Reformierten in " + country.id + " von 1945 - 2010";
+                textBarchart = "Anzahl der Reformierten in " + country.id;
                 colorBars = "#cb181d";
             }
             else if(religion == "judaism"){
                 data.push({"value": d.judaism_percent, "year": d.year});
-                textBarchart = "Anzahl der Juden in " + country.id + " von 1945 - 2010";
+                textBarchart = "Anzahl der Juden in " + country.id;
                 colorBars = "#08306b";
             }
             else if(religion == "islam"){
                 data.push({"value": d.islam_percent, "year": d.year});
-                textBarchart = "Anzahl der Islamisten in " + country.id + " von 1945 - 2010";
+                textBarchart = "Anzahl der Islamisten in " + country.id;
                 colorBars = "#00441b";
             }
             else if(religion == "buddhism"){
                 data.push({"value": d.buddhism_percent, "year": d.year});
-                textBarchart = "Anzahl der Buddhisten in "  + country.id + " von 1945 - 2010";
+                textBarchart = "Anzahl der Buddhisten in "  + country.id;
                 colorBars = "#f16913";
             }
             else{
                 data.push({"value": d.hinduism_percent, "year": d.year});
-                textBarchart = "Anzahl der Hinduisten in " + country.id + " von 1945 - 2010";
+                textBarchart = "Anzahl der Hinduisten in " + country.id;
                 colorBars = "#666600";
             }
         }
     });
-    console.log(data);
     if(data.length == 0) return;
 
-    var margin = {top: 5, right: 5, bottom: 50, left: 100};
+    var margin = {top: 40, right: 5, bottom: 50, left: 100};
     // here, we want the full chart to be 700x200, so we determine
     // the width and height by subtracting the margins from those values
     var fullWidth = 1000;

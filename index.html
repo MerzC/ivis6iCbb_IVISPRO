@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Religion Verteilung</title>
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     <style>
         body{
             text-align: center;
-            font-family: 'Open Sans';
+            font-family: 'Roboto', sans-serif;
             background: #fff;
         }
 
@@ -21,22 +21,29 @@
         }
 
         #chart-title{
-            font-size: 12px;
-            font-weight: bold;
+            font-size: 0.8em;
+            font-weight: 700;
         }
 
         #worldmap{
             text-align: center;
-            font-family: 'Open Sans';
         }
 
         .holderSlider{
             margin-bottom: 20px;
+            background: #f7f7f7;
+            padding: 2em;
+        }
+
+        .holderSlider .title{
+            font-size: 1.5em;
+            font-weight: 900;
         }
         .slidecontainer {
             margin: 10px;
             width: 100%; /* Width of the outside container */
             text-align: center;
+
         }
 
         .slider {
@@ -68,6 +75,11 @@
             background: #000000;
             cursor: pointer;
         }
+
+        #selected_year{
+            font-weight: 400;
+            font-style: italic;
+        }
         .formHolder{
             max-width: 2000px; height: auto; margin: auto; padding: 10px;
         }
@@ -80,10 +92,12 @@
 
         div.tooltip {
             color: #222;
+            font-size: 10px;
             background: #fff;
             border-radius: 3px;
-            box-shadow: 0px 0px 2px 0px #a6a6a6;
-            padding: .2em;
+            box-shadow: 0px 0px 2px 0px #e6e6e6;
+            padding: .4em;
+            margin-left: 8px;
             text-shadow: #f5f5f5 0 1px 0;
             opacity: 0.9;
             position: absolute;
@@ -97,11 +111,11 @@
 
     <form class="formHolder" style="max-width: 2000px; height: auto; margin: auto; padding: 10px;">
         <div class="holderSlider">
-            <label for="year">Wähle ein Jahr aus: </label>
+            <label class="title" for="year">Wähle ein Jahr aus: </label>
             <div class="slidecontainer">
-                <input type="range" min=1945 max=2010 step=5 id="year" value=2010 oninput="selected_year.value = year.value" class="slider">
+                <input type="range" min=1945 max=2010 step=5 id="year" value=1945 oninput="selected_year.value = year.value" class="slider">
             </div>
-            <output name="selected_year" id="selected_year">2010</output>
+            <output name="selected_year" id="selected_year">1945</output>
         </div>
 
         <div id="worldmap">
@@ -115,6 +129,7 @@
 <script src="lib/d3/queue.v1.min.js"></script>
 <script src="lib/d3/topojson.v2.min.js"></script>
 <script src="lib/node_modules/d3-geo-projection/build/d3-geo-projection.min.js"></script>
+<script type="text/javascript" src="src/tooltip.js"></script>
 <script src="src/world_map.js"></script>
 <script>
 </script>
