@@ -80,12 +80,12 @@ const margin = {top: 50, right: 80, bottom: 50, left: 30};
 const width = canvWidth - margin.left - margin.right;
 const heigth = canvHeight - margin.top - margin.bottom;
 
-//Load the religion data for each country
-loadData();
+
 function loadData() {
     d3.csv("data/national-clean.csv", function (data) {
 
-        const time = ["1945", "1950", "1955", "1960", "1965", "1970", "1975" , "1980", "1985", "1990", "1995", "2000", "2005", "2010"];
+        const time = ["1945", "1950", "1955", "1960", "1965", "1970", "1975" , "1980",
+            "1985", "1990", "1995", "2000", "2005", "2010"];
 
         //fill the holdedData Variable
         time.forEach(function (d) {
@@ -584,3 +584,6 @@ function drawBarchart(country, religion) {
     //Scroll to Barchart
     window.scrollTo(0,document.body.scrollHeight);
 }
+
+//Load the religion data for each country
+loadData();
